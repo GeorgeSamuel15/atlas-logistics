@@ -1,0 +1,32 @@
+{
+  "name": "atlas-logistics",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently -k -n API,WEB -c cyan,green \"npm run dev -w @atlas/api\" \"npm run dev -w @atlas/web\"",
+    "setup": "npm run seed -w @atlas/api",
+    "build": "npm run typecheck && npm run build -w @atlas/web && npm run build -w @atlas/api",
+    "typecheck": "tsc --noEmit -p apps/api && tsc --noEmit -p apps/web",
+    "start": "npm run start -w @atlas/api",
+    "test": "npm run test -w @atlas/api",
+    "test:browser": "playwright test",
+    "check": "npm run build && npm test",
+    "bootstrap": "npm run bootstrap -w @atlas/api",
+    "fresh-start": "npm run fresh-start -w @atlas/api"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.58.2",
+    "@types/node": "24.3.0",
+    "concurrently": "9.2.1",
+    "typescript": "5.9.2",
+    "tsx": "4.20.5"
+  }
+}

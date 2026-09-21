@@ -1,0 +1,15 @@
+services:
+  app:
+    build: .
+    ports:
+      - "127.0.0.1:4000:4000"
+    environment:
+      HOST: 0.0.0.0
+      PORT: 4000
+      DB_PATH: /var/lib/atlas/atlas.sqlite
+      APP_ORIGINS: http://localhost:4000,http://127.0.0.1:4000
+    volumes:
+      - atlas-data:/var/lib/atlas
+    restart: unless-stopped
+volumes:
+  atlas-data:

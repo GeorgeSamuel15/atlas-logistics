@@ -1,0 +1,30 @@
+
+> atlas-logistics@1.0.0 test
+> npm run test -w @atlas/api
+
+
+> @atlas/api@1.0.0 test
+> node --import tsx --test tests/*.test.ts
+
+✔ booking → assignment → delivery proof → exact invoice settlement (287.665992ms)
+✔ customer and driver isolation; public tracking removes private fields (208.484647ms)
+✔ CSRF, origin rejection and session revocation (175.757017ms)
+✔ stale versions and lifecycle skipping are rejected (170.38056ms)
+✔ capacity and conflicting driver assignments are enforced (163.678943ms)
+✔ warehouse custody prevents duplicate receive and delivery departure bypass (211.957635ms)
+✔ partial payments reject overpayment and duplicate references; paid booking cannot cancel (204.380993ms)
+✔ unpaid cancellation voids invoice atomically (166.282615ms)
+✔ routes enforce assignments, reject duplicates, and support a failed-delivery retry (191.742573ms)
+✔ ticket conversations are scoped and closed tickets reject messages (194.666081ms)
+✔ password changes invalidate all sessions and inactive users cannot sign in (301.922875ms)
+✔ future rate changes do not modify existing shipment pricing (200.78321ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2875.231296
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
