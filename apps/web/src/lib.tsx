@@ -1,9 +1,35 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import type { User } from '@atlas/shared';
 export let csrf = '';
-export function setCsrf(value: string) { csrf = value; }
-export async function api<T>(path: string, options: RequestInit = {}): Promise<T> { const response = await fetch('/api' + path, { ...options, credentials: 'same-origin', headers: { 'Content-Type': 'application/json', 'x-csrf-token': csrf, ...options.headers } }); const data = await response.json(); if (!response.ok)
-    throw new Error(data.error || 'Request failed'); return data as T; }
+
+export function setCsrf(value: string) {
+    csrf = value;
+}
+
+const API_BASE = (import.meta.env.VITE_API_URL || '/api').replace(/\/$/, '');
+
+export async function api<T>(
+    path: string,
+    options: RequestInit = {}
+): Promise<T> {
+    const response = await fetch(API_BASE + path, {
+        ...options,
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json',
+            'x-csrf-token': csrf,
+            ...options.headers,
+        },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.error || 'Request failed');
+    }
+
+    return data as T;
+}
 export const post = <T,>(path: string, body: unknown) => api<T>(path, { method: 'POST', body: JSON.stringify(body) });
 export const patch = <T,>(path: string, body: unknown) => api<T>(path, { method: 'PATCH', body: JSON.stringify(body) });
 export const AppContext = createContext<{
