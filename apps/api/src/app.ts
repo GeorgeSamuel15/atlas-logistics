@@ -24,11 +24,39 @@ export function createApp(db: DB) {
     app.disable('x-powered-by');
     app.use(helmet({ contentSecurityPolicy: { directives: { 'script-src': ["'self'"], 'style-src': ["'self'", "'unsafe-inline'"], 'img-src': ["'self'", 'data:'], 'upgrade-insecure-requests': process.env.NODE_ENV === 'production' ? [] : null } } }));
     app.use(express.json({ limit: '128kb' }), cookieParser());
-    app.use('/api', (req, _res, next) => { if (!['GET', 'HEAD', 'OPTIONS'].includes(req.method)) {
-        const origin = req.get('origin');
-        if (origin && !allowedOrigins.has(origin))
-            return next(new HttpError(403, `Origin not allowed: ${origin}. Add this exact address to APP_ORIGINS and restart the API.`));
-    } next(); });
+    app.use('/api', (req, res, next) => {
+    const origin = req.get('origin');
+
+    if (origin) {
+        if (!allowedOrigins.has(origin)) {
+            return next(
+                new HttpError(
+                    403,
+                    `Origin not allowed: ${origin}. Add this exact address to APP_ORIGINS and restart the API.`
+                )
+            );
+        }
+
+        res.setHeader('Access-Control-Allow-Origin', origin);
+        res.setHeader('Access-Control-Allow-Credentials', 'true');
+        res.setHeader(
+            'Access-Control-Allow-Methods',
+            'GET,HEAD,POST,PUT,PATCH,DELETE,OPTIONS'
+        );
+        res.setHeader(
+            'Access-Control-Allow-Headers',
+            'Content-Type, x-csrf-token'
+        );
+        res.setHeader('Vary', 'Origin');
+    }
+
+    // Browser CORS preflight must NOT reach authentication.
+    if (req.method === 'OPTIONS') {
+        return res.sendStatus(204);
+    }
+
+    next();
+});
     app.get('/api/health', (_req, res) => res.json({ ok: true, service: 'Atlas API' }));
     app.get('/api/track/:tracking', rateLimit({ windowMs: 60000, limit: 40 }), (req, res) => { const s = one<{
         id: string;
